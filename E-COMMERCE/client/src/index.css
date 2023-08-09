@@ -1,0 +1,15 @@
+.dataTables_filter {
+  display: none;
+}
+
+.card-table {
+  padding: 30px;
+}
+
+.dataTables_paginate {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+}
