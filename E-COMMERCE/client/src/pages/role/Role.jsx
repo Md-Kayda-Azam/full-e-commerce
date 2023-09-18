@@ -116,6 +116,7 @@ const Role = () => {
       dispatch(setMessageEmpty());
     }
   }, [error, message, dispatch]);
+
   useEffect(() => {
     new DataTables(".datatable");
   });
@@ -123,7 +124,7 @@ const Role = () => {
     <>
       <PageHeader title="Roles" />
 
-      <ModalPopup target="userModalPopup" title="Add new role">
+      <ModalPopup target="roleModalPopup" title="Add new role">
         <form onSubmit={handleSubmitForm}>
           <div className="my-3">
             <label htmlFor="">Role Name</label>
@@ -198,7 +199,7 @@ const Role = () => {
         <div className="col-md-12">
           <button
             className="btnm btn-primary"
-            data-target="#userModalPopup"
+            data-target="#roleModalPopup"
             data-toggle="modal"
           >
             Add new role

@@ -3,6 +3,10 @@ import colors from "colors";
 import dotenv from "dotenv";
 import cors from "cors";
 import userRoute from "./routes/userRoute.js";
+import brandRoute from "./routes/brandRoute.js";
+import productRoute from "./routes/productRoute.js";
+import tagRoute from "./routes/tagRoute.js";
+import categoryRoute from "./routes/categoryRoute.js";
 import authRoute from "./routes/authRoute.js";
 import roleRoute from "./routes/roleRoute.js";
 import permissionRoute from "./routes/permissionRoute.js";
@@ -30,6 +34,10 @@ app.use(express.static("/api/public"));
 
 // routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/product/brand", brandRoute);
+app.use("/api/v1/product", productRoute);
+app.use("/api/v1/product/tag", tagRoute);
+app.use("/api/v1/product/category", categoryRoute);
 app.use("/api/v1/role", roleRoute);
 app.use("/api/v1/permission", permissionRoute);
 app.use("/api/v1/auth", authRoute);

@@ -19,9 +19,9 @@ const Header = () => {
     <>
       <div className="header">
         <div className="header-left">
-          <a href="index.html" className="logo">
+          <Link to="/" className="logo">
             <img src={logo} alt="Logo" />
-          </a>
+          </Link>
           <a href="index.html" className="logo logo-small">
             <img
               src="assets/img/logo-small.png"

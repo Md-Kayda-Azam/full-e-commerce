@@ -1,23 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
 import useAuthUser from "../../hooks/useAuthUser";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import {
   getAllPermission,
   getAllRoles,
   getAllUsers,
 } from "../../features/user/userApiSlice";
+import { getAllBrands } from "../../features/product/productApiSlice";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
-
   const location = useLocation();
   const { user } = useAuthUser();
-
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllPermission());
     dispatch(getAllRoles());
     dispatch(getAllUsers());
+    dispatch(getAllBrands());
   }, [dispatch]);
 
   return (
@@ -66,7 +66,7 @@ const Sidebar = () => {
               )}
               {user?.role?.permissions?.includes("Brands") && (
                 <li className="">
-                  <Link to="/users">
+                  <Link to="/brand">
                     <i className="fe fe-users"></i> <span>Brands</span>
                   </Link>
                 </li>
