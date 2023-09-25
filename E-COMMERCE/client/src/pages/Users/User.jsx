@@ -1,24 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
-import DataTables from "react-data-table-component";
+import { useDispatch, useSelector } from "react-redux";
 
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { getAllPermissionData } from "../../features/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteRole,
-  deleteRoles,
-  updateRoleStatusData,
-} from "../../features/user/userApiSlice";
+import { useEffect, useMemo, useState } from "react";
+
+import DataTables from "react-data-table-component";
+
 import { timeAgo } from "../../helpers/timeAgo";
-import CreateRole from "../../components/Modals/RoleModals/CreateRole";
 import {
   deleteAlert,
   messageToaster,
   selectionRowsDelete,
 } from "../../utils/tools";
-import UpdateRole from "../../components/Modals/RoleModals/UpdateRole";
+import CreateUser from "../../components/Modals/UserModals/CreateUser";
+import UpdateUser from "../../components/Modals/UserModals/UpdateUser";
+import {
+  deleteUser,
+  deleteUsers,
+  updateUserStatusData,
+} from "../../features/user/userApiSlice";
 
-const Role = () => {
+const User = () => {
   const cols = [
     {
       name: "Name",
@@ -26,24 +27,16 @@ const Role = () => {
       sortable: true,
     },
     {
-      name: "Slug",
-      selector: (row) => row.slug,
+      name: "Email",
+      selector: (row) => row.email,
     },
     {
-      name: "Permission",
-      selector: (row) => (
-        <>
-          <ul>
-            {row.permissions?.map((per, index) => {
-              return (
-                <li style={{ listStyleType: "none" }} key={index}>
-                  {per}
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      ),
+      name: "Role",
+      selector: (row) => row.role?.name,
+    },
+    {
+      name: "Mobile",
+      selector: (row) => row.mobile,
     },
     {
       name: "CreatedAt",
@@ -75,14 +68,14 @@ const Role = () => {
         <>
           <button
             className="btn btn-small btn-warning mr-1"
-            data-target="#roleEditModalPopup"
+            data-target="#userUpdateModalPopup"
             data-toggle="modal"
             onClick={() => setIdEdit(row._id)}
           >
             <i className="fa fa-edit"></i>
           </button>
           <button
-            onClick={() => handleDeleteRole(row._id)}
+            onClick={() => handleUserDelete(row._id)}
             className="btn btn-small btn-danger"
           >
             <i className="fa fa-trash"></i>
@@ -93,38 +86,28 @@ const Role = () => {
   ];
 
   const dispatch = useDispatch();
-
-  const { role, error, message } = useSelector(getAllPermissionData);
+  const { user, error, message } = useSelector((state) => state.user);
 
   const [idEdit, setIdEdit] = useState("");
-
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
 
-  // delete role data
-  const handleDeleteRole = (id) => {
-    deleteAlert(dispatch, deleteRole, id);
-  };
-  /// status update
+  // handle User status updated
   const handleStatusUpdate = (id, status) => {
-    dispatch(updateRoleStatusData({ id, status }));
+    dispatch(updateUserStatusData({ id, status }));
   };
 
-  // validation
-  useEffect(() => {
-    messageToaster(dispatch, error, message);
-  }, [error, message, dispatch]);
-
-  // handle rows select
+  // Selected Rows map
   const handleRowSelect = (state) => {
     setSelectedRows(state.selectedRows.map((row) => row));
   };
-  // Delete all rows seleted
+
+  // Delete all rows seleted Brands
   const contextActions = useMemo(() => {
     const handleDelete = selectionRowsDelete(
       selectedRows,
       dispatch,
-      deleteRoles,
+      deleteUsers,
       setSelectedRows,
       setToggleCleared,
       toggleCleared
@@ -133,11 +116,21 @@ const Role = () => {
     return handleDelete;
   }, [dispatch, selectedRows, setToggleCleared, toggleCleared]);
 
-  // Role Data search and Filtering code
+  // User data delete
+  const handleUserDelete = (id) => {
+    deleteAlert(dispatch, deleteUser, id);
+  };
+
+  // Toaster Message
+  useEffect(() => {
+    messageToaster(dispatch, error, message);
+  }, [error, message, dispatch]);
+
+  // User Data search and Filtering code
   const [filterText, setFilterText] = useState("");
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
-  const filteredItems = role?.filter(
+  const filteredItems = user?.filter(
     (item) =>
       item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
   );
@@ -148,22 +141,20 @@ const Role = () => {
       setFilterText("");
     }
   };
-
   return (
     <>
-      <PageHeader title="Roles" />
+      <PageHeader title="User" />
 
-      <CreateRole show="roleModalPopup" />
-      <UpdateRole idEdit={idEdit} show="roleEditModalPopup" />
-
+      <CreateUser show="userModalPopup" />
+      <UpdateUser idEdit={idEdit} show="userUpdateModalPopup" />
       <div className="row">
         <div className="col-md-12">
           <button
             className="btnm btn-primary"
-            data-target="#roleModalPopup"
+            data-target="#userModalPopup"
             data-toggle="modal"
           >
-            Add new role
+            Add new user
           </button>
           <br />
           <br />
@@ -171,7 +162,7 @@ const Role = () => {
             fixedHeader
             pagination
             className="shadow-sm"
-            title="All Categories Data"
+            title="All Users Data"
             columns={cols}
             data={filteredItems}
             onSelectedRowsChange={handleRowSelect}
@@ -208,4 +199,4 @@ const Role = () => {
   );
 };
 
-export default Role;
+export default User;

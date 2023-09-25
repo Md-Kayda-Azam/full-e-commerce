@@ -1,11 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   createBrand,
+  createProductCategory,
+  createTag,
   deleteBrand,
   deleteBrands,
+  deleteCategories,
+  deleteProductCategory,
+  deleteTag,
+  deleteTags,
   getAllBrands,
-  updatedBrandData,
+  getAllCategories,
+  getAllTags,
+  updateStatusProductCategory,
   updatedBrandStatusData,
+  updatedProductBrand,
+  updatedProductCategory,
+  updatedStatusTag,
+  updatedTag,
 } from "./productApiSlice";
 
 // create user slice
@@ -73,14 +85,14 @@ const productSlice = createSlice({
         ] = action.payload.brand;
         state.message = action.payload.message;
       })
-      .addCase(updatedBrandData.pending, (state) => {
+      .addCase(updatedProductBrand.pending, (state) => {
         state.loader = true;
       })
-      .addCase(updatedBrandData.rejected, (state, action) => {
+      .addCase(updatedProductBrand.rejected, (state, action) => {
         state.error = action.error.message;
         state.loader = false;
       })
-      .addCase(updatedBrandData.fulfilled, (state, action) => {
+      .addCase(updatedProductBrand.fulfilled, (state, action) => {
         state.brand[
           state.brand.findIndex((data) => data._id == action.payload.brand._id)
         ] = action.payload.brand;
@@ -99,6 +111,120 @@ const productSlice = createSlice({
           (data) => data._id != action.payload.idList[0]
         );
         state.loader = false;
+        state.message = action.payload.message;
+      })
+      .addCase(createTag.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(createTag.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(createTag.fulfilled, (state, action) => {
+        state.tag = state.tag ?? [];
+        state.tag.push(action.payload.tag);
+        state.message = action.payload.message;
+        state.loader = false;
+      })
+      .addCase(getAllTags.fulfilled, (state, action) => {
+        state.tag = action.payload.tags;
+        state.loader = false;
+      })
+      .addCase(deleteTag.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(deleteTag.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(deleteTag.fulfilled, (state, action) => {
+        state.tag = state.tag.filter(
+          (data) => data._id != action.payload.tag._id
+        );
+        state.message = action.payload.message;
+      })
+      .addCase(updatedTag.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(updatedTag.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(updatedTag.fulfilled, (state, action) => {
+        state.tag[
+          state.tag.findIndex((data) => data._id == action.payload.tag._id)
+        ] = action.payload.tag;
+        state.loader = false;
+        state.message = action.payload.message;
+      })
+      .addCase(updatedStatusTag.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(updatedStatusTag.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(updatedStatusTag.fulfilled, (state, action) => {
+        state.tag[
+          state.tag.findIndex((data) => data._id == action.payload.tag._id)
+        ] = action.payload.tag;
+        state.message = action.payload.message;
+      })
+      .addCase(deleteTags.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(deleteTags.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(deleteTags.fulfilled, (state, action) => {
+        state.tag = state.tag.filter(
+          (data) => data._id != action.payload.idList[0]
+        );
+        state.loader = false;
+        state.message = action.payload.message;
+      })
+      .addCase(getAllCategories.fulfilled, (state, action) => {
+        state.category = action.payload.categories;
+      })
+      .addCase(createProductCategory.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(createProductCategory.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.loader = false;
+      })
+      .addCase(createProductCategory.fulfilled, (state, action) => {
+        state.category = state.category ?? [];
+        state.category.push(action.payload.category);
+        state.message = action.payload.message;
+        state.loader = false;
+      })
+      .addCase(updatedProductCategory.fulfilled, (state, action) => {
+        state.category[
+          state.category.findIndex(
+            (data) => data._id == action.payload.updateCategory._id
+          )
+        ] = action.payload.updateCategory;
+        state.loader = false;
+        state.message = action.payload.message;
+      })
+      .addCase(updateStatusProductCategory.fulfilled, (state, action) => {
+        state.category[
+          state.category.findIndex(
+            (data) => data._id == action.payload.category._id
+          )
+        ] = action.payload.category;
+        state.message = action.payload.message;
+      })
+      .addCase(deleteProductCategory.fulfilled, (state, action) => {
+        state.category = state.category.filter(
+          (data) => data._id != action.payload.category._id
+        );
+        state.message = action.payload.message;
+      })
+      .addCase(deleteCategories.fulfilled, (state, action) => {
+        state.category = state.category.filter(
+          (data) => data._id != action.payload.idList[0]
+        );
         state.message = action.payload.message;
       });
   },

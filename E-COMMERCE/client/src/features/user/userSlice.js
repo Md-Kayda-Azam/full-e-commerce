@@ -4,8 +4,11 @@ import {
   createRole,
   createUser,
   deletePermission,
+  deletePermissions,
   deleteRole,
+  deleteRoles,
   deleteUser,
+  deleteUsers,
   getAllPermission,
   getAllRoles,
   getAllUsers,
@@ -58,6 +61,12 @@ const userSlice = createSlice({
         );
         state.message = action.payload.message;
       })
+      .addCase(deletePermissions.fulfilled, (state, action) => {
+        state.permission = state.permission.filter(
+          (data) => data._id != action.payload.idList[0]
+        );
+        state.message = action.payload.message;
+      })
       .addCase(updatePermissionStatusData.rejected, (state, action) => {
         state.error = action.error.message;
       })
@@ -89,6 +98,12 @@ const userSlice = createSlice({
       .addCase(deleteRole.fulfilled, (state, action) => {
         state.role = state.role.filter(
           (data) => data._id != action.payload.role._id
+        );
+        state.message = action.payload.message;
+      })
+      .addCase(deleteRoles.fulfilled, (state, action) => {
+        state.role = state.role.filter(
+          (data) => data._id != action.payload.idList[0]
         );
         state.message = action.payload.message;
       })
@@ -128,6 +143,12 @@ const userSlice = createSlice({
         state.message = action.payload.message;
         state.user = state.user.filter(
           (data) => data._id != action.payload.user._id
+        );
+      })
+      .addCase(deleteUsers.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.user = state.user.filter(
+          (data) => data._id != action.payload.idList[0]
         );
       })
       .addCase(updateUserStatusData.fulfilled, (state, action) => {

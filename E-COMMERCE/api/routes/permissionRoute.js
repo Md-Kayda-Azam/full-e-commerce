@@ -7,6 +7,7 @@ import {
   singlePermission,
   updatedPermission,
   statusUpdatePermission,
+  deletePermissions,
 } from "../controllers/permissionControllers.js";
 
 const router = express.Router();
@@ -16,7 +17,9 @@ router.use(tokenVerify);
 
 // create route
 router.get("/", getAllPermissions);
-router.post("/", createPermission);
+router
+  .post("/", createPermission)
+  .post("/deletePermissions", deletePermissions);
 router.get("/:id", singlePermission);
 router.delete("/:id", deletePermission);
 router.put("/:id", updatedPermission);

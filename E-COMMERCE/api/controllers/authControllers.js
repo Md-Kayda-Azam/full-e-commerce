@@ -9,6 +9,7 @@ import {
 } from "../helper/sendMail.js";
 import { createToken, tokenVerify } from "../helper/token.js";
 import { generateRandomCode } from "../helper/CodeGenerate.js";
+import { cloudPhotoDelete, cloudUploads } from "../utils/cloudinary.js";
 
 /**
  * @DESC Login User
@@ -426,6 +427,47 @@ export const userProfileUpdate = async (req, res, next) => {
 
     res.status(200).json({
       user,
+      message: "User updated successful",
+    });
+  } catch (error) {
+    next(createError("User  updated not found", 400));
+  }
+};
+/**
+ * user profile update
+ * @param {*} req
+ * @param {*} res
+ *
+ */
+export const userProfilePhotoUpdate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      next(createError("User  updated not found", 400));
+    }
+
+    let logoFile = user.photo;
+    if (req.file) {
+      const logo = await cloudUploads(req.file.path);
+      logoFile = logo;
+      if (user.photo) {
+        await cloudPhotoDelete(user.photo);
+      }
+    }
+
+    const userData = await User.findByIdAndUpdate(
+      id,
+      {
+        photo: logoFile,
+      },
+      { new: true }
+    ).populate("role");
+
+    res.status(200).json({
+      user: userData,
       message: "User updated successful",
     });
   } catch (error) {

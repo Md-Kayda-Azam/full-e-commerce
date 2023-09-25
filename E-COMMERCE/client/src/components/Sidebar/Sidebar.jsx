@@ -6,7 +6,11 @@ import {
   getAllRoles,
   getAllUsers,
 } from "../../features/user/userApiSlice";
-import { getAllBrands } from "../../features/product/productApiSlice";
+import {
+  getAllBrands,
+  getAllCategories,
+  getAllTags,
+} from "../../features/product/productApiSlice";
 import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
@@ -18,6 +22,8 @@ const Sidebar = () => {
     dispatch(getAllRoles());
     dispatch(getAllUsers());
     dispatch(getAllBrands());
+    dispatch(getAllTags());
+    dispatch(getAllCategories());
   }, [dispatch]);
 
   return (
@@ -38,42 +44,45 @@ const Sidebar = () => {
               )}
               {user?.role?.permissions?.includes("Orders") && (
                 <li className="">
-                  <Link to="/users">
+                  <Link to="/order">
                     <i className="fe fe-users"></i> <span>Orders</span>
                   </Link>
                 </li>
               )}
               {user?.role?.permissions?.includes("Products") && (
                 <li className="">
-                  <Link to="/users">
+                  <Link to="/product">
                     <i className="fe fe-users"></i> <span>Products</span>
                   </Link>
                 </li>
               )}
               {user?.role?.permissions?.includes("Category") && (
-                <li className="">
-                  <Link to="/users">
+                <li
+                  className={location.pathname === "/category" ? "active" : ""}
+                >
+                  <Link to="/category">
                     <i className="fe fe-users"></i> <span>Category</span>
                   </Link>
                 </li>
               )}
-              {user?.role?.permissions?.includes("Tags") && (
-                <li className="">
-                  <Link to="/users">
-                    <i className="fe fe-users"></i> <span>Tags</span>
+              {user?.role?.permissions?.includes("Tag") && (
+                <li className={location.pathname === "/tag" ? "active" : ""}>
+                  <Link to="/tag">
+                    <i className="fe fe-users"></i> <span>Tag</span>
                   </Link>
                 </li>
               )}
+
               {user?.role?.permissions?.includes("Brands") && (
-                <li className="">
+                <li className={location.pathname === "/brand" ? "active" : ""}>
                   <Link to="/brand">
                     <i className="fe fe-users"></i> <span>Brands</span>
                   </Link>
                 </li>
               )}
               {user?.role?.permissions?.includes("Users") && (
-                <li className={location.pathname === "/users" ? "active" : ""}>
-                  <Link to="/users">
+                <li className={location.pathname === "/user" ? "active" : ""}>
+                  <Link to="/user">
                     <i className="fe fe-users"></i> <span>Users</span>
                   </Link>
                 </li>

@@ -1,65 +1,34 @@
 import { Link } from "react-router-dom";
 import avater from "../../assets/img/profiles/avatar-01.jpg";
-import ModalPopup from "../../components/ModalPopup/ModalPopup";
-import useFormFrilds from "../../hooks/inputFeildsForm";
 import PasswordChange from "./PasswordChange";
-import { createToast } from "../../helpers/toast";
-import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
+import { getAuthData } from "../../features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { profileUpdate } from "../../features/auth/authApiSlice";
+import { useEffect, useState } from "react";
+import { messageToaster, profilePhotoChange } from "../../utils/tools";
+import UpdateProfile from "../../components/Modals/ProfileModals/UpdateProfile";
+import { profilePhotoUpdate } from "../../features/auth/authApiSlice";
 
 const Profile = () => {
   const { user, error, message } = useSelector(getAuthData);
   const dispatch = useDispatch();
-  const [input, handleInputChange, resetForm] = useFormFrilds({
-    name: "",
-    email: "",
-    mobile: "",
-    gender: "",
-    city: "",
-    country: "",
+
+  const [input, setInput] = useState({
+    logo: "",
+    photo: null,
   });
 
-  /// handleSubmit
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (
-      !input.name ||
-      !input.email ||
-      !input.mobile ||
-      !input.gender ||
-      !input.city ||
-      !input.country
-    ) {
-      createToast("All fields are required", "error");
-    } else {
-      dispatch(
-        profileUpdate({
-          id: user._id,
-          name: input.name,
-          email: input.email,
-          mobile: input.mobile,
-          gender: input.gender,
-          city: input.city,
-          country: input.country,
-        })
-      );
-      resetForm();
-    }
-  };
   // validation
   useEffect(() => {
-    if (error) {
-      createToast(error);
-      dispatch(setMessageEmpty());
-    }
-    if (message) {
-      createToast(message, "success");
-      dispatch(setMessageEmpty());
-    }
+    messageToaster(dispatch, error, message);
   }, [error, message, dispatch]);
+
+  const handleFileChange = (e) => {
+    const updatedInput = profilePhotoChange(input, e, setInput); // Use the returned updated input
+    const form_data = new FormData();
+    form_data.append("profilePhoto", updatedInput.logo); // Use updatedInput.logo
+    dispatch(profilePhotoUpdate({ data: form_data, id: user._id }));
+  };
+
   return (
     <>
       <div className="content container-fluid" style={{ padding: "0px" }}>
@@ -83,10 +52,22 @@ const Profile = () => {
               <div className="row align-items-center">
                 <div className="col-auto profile-image">
                   <a href="#">
-                    <img
-                      className="rounded-circle"
-                      alt="User Image"
-                      src={avater}
+                    <label htmlFor="fileInput">
+                      <img
+                        className="rounded-circle"
+                        alt="User Image"
+                        src={user.photo ? user.photo : avater}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      />
+                    </label>
+                    <input
+                      style={{ display: "none" }}
+                      type="file"
+                      id="fileInput"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e)}
                     />
                   </a>
                 </div>
@@ -147,124 +128,43 @@ const Profile = () => {
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                             Name :
                           </p>
-                          <p className="col-sm-10">John Doe</p>
+                          <p className="col-sm-10">{user?.name}</p>
                         </div>
 
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                             Email :
                           </p>
-                          <p className="col-sm-10">johndoe@example.com</p>
+                          <p className="col-sm-10">{user?.email}</p>
                         </div>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                             Mobile :
                           </p>
-                          <p className="col-sm-10">305-310-5857</p>
+                          <p className="col-sm-10">{user?.mobile}</p>
                         </div>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                             Gender :
                           </p>
-                          <p className="col-sm-10">Male</p>
+                          <p className="col-sm-10">{user?.gender}</p>
                         </div>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">
                             City :
                           </p>
-                          <p className="col-sm-10">Dinajpur</p>
+                          <p className="col-sm-10">{user?.city}</p>
                         </div>
                         <div className="row">
                           <p className="col-sm-2 text-muted text-sm-right mb-0">
                             Country :
                           </p>
-                          <p className="col-sm-10 mb-0">Bangladesh</p>
+                          <p className="col-sm-10 mb-0">{user?.country}</p>
                         </div>
                       </div>
                     </div>
 
-                    <ModalPopup
-                      target="userEditModalPopup"
-                      title="Add new permission"
-                    >
-                      <form onSubmit={handleSubmit}>
-                        <div className="my-3">
-                          <label htmlFor="">Name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="name"
-                            value={input.name}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="my-3">
-                          <label htmlFor="">Email</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="email"
-                            value={input.email}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="my-3">
-                          <label htmlFor="">Mobile</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="mobile"
-                            value={input.mobile}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="my-3">
-                          <label htmlFor="">City</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="city"
-                            value={input.city}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="my-3">
-                          <label htmlFor="">Country</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="country"
-                            value={input.country}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="my-3">
-                          <label htmlFor="">Gender</label>
-                          <select
-                            id="gender"
-                            name="gender"
-                            className="form-control"
-                            value={input.gender}
-                            onChange={handleInputChange}
-                          >
-                            <option value="none" selected>
-                              Gender
-                            </option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                          </select>
-                        </div>
-
-                        <div className="my-3">
-                          <button
-                            className="btn btn-primary btn-block"
-                            type="submit"
-                          >
-                            Add new permission
-                          </button>
-                        </div>
-                      </form>
-                    </ModalPopup>
+                    <UpdateProfile show="userEditModalPopup" />
                   </div>
                 </div>
               </div>

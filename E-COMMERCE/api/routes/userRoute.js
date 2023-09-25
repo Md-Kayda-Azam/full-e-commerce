@@ -6,7 +6,7 @@ import {
   singleUsers,
   updatedUser,
   statusUpdateUser,
-
+  deleteUsers,
 } from "../controllers/userControllers.js";
 import tokenVerify from "../middlewares/verifyToken.js";
 
@@ -17,11 +17,11 @@ router.use(tokenVerify);
 
 // create route
 router.get("/", getAllUsers);
-router.post("/", createUser);
+router.post("/", createUser).post("/deleteUsers", deleteUsers);
 router.get("/:id", singleUsers);
 router.delete("/:id", deleteUser);
+router.post("/:id", statusUpdateUser);
 router.patch("/:id", updatedUser);
 router.put("/:id", updatedUser);
-router.post("/:id", statusUpdateUser);
 
 export default router;

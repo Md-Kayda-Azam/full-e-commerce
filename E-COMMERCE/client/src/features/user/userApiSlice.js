@@ -65,6 +65,25 @@ export const deletePermission = createAsyncThunk(
     }
   }
 );
+// delete permissions
+export const deletePermissions = createAsyncThunk(
+  "user/deletePermissions",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5050/api/v1/permission/deletePermissions`,
+        data,
+
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
 // delete permission
 export const deleteRole = createAsyncThunk("user/deleteRole", async (id) => {
   try {
@@ -80,6 +99,25 @@ export const deleteRole = createAsyncThunk("user/deleteRole", async (id) => {
     throw new Error(error.response.data.message);
   }
 });
+// delete roles
+export const deleteRoles = createAsyncThunk(
+  "user/deleteRoles",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5050/api/v1/role/deleteRoles`,
+        data,
+
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
 // update Permission Status Data
 export const updatePermissionStatusData = createAsyncThunk(
   "user/updatePermissionStatusData",
@@ -216,7 +254,25 @@ export const updateUser = createAsyncThunk(
   async (data) => {
     try {
       const response = await axios.put(
-        `http://localhost:5050/api/v1/user/${data.id}`,
+        `http://localhost:5050/api/v1/user/${data._id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// Update User Status Data
+export const deleteUsers = createAsyncThunk(
+  "user/deleteUsers",
+  async (data) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5050/api/v1/user/deleteUsers`,
         data,
         {
           withCredentials: true,

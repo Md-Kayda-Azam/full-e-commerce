@@ -8,6 +8,7 @@ import {
   logOutUser,
   loginUser,
   profilePasswordChange,
+  profilePhotoUpdate,
   profileUpdate,
 } from "./authApiSlice";
 
@@ -91,6 +92,11 @@ const authSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(profileUpdate.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.message = action.payload.message;
+      })
+      .addCase(profilePhotoUpdate.fulfilled, (state, action) => {
+        state.user = action.payload.user;
         state.message = action.payload.message;
       });
   },

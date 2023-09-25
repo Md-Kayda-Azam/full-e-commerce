@@ -66,7 +66,7 @@ export const singleBrand = async (req, res, next) => {
   try {
     const { id } = req.params;
     const brand = await Brand.findById(id);
-    res.status(200).json({
+    return res.status(200).json({
       brand,
       message: "Single data successful",
     });
@@ -90,7 +90,7 @@ export const deletebrand = async (req, res, next) => {
       await cloudPhotoDelete(brand.photo);
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       brand,
       message: "Brand delete data successful",
     });
@@ -131,7 +131,7 @@ export const updatedbrand = async (req, res, next) => {
     brandUpdate.save();
 
     const brand = brandUpdate;
-    res.status(200).json({
+    return res.status(200).json({
       brand,
       message: "brand updated successful",
     });
@@ -158,7 +158,9 @@ export const statusUpdatebrand = async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).json({ brand, message: "Status updated successful" });
+    return res
+      .status(200)
+      .json({ brand, message: "Status updated successful" });
   } catch (error) {
     next(createError("brand status update not found", 400));
   }
@@ -177,15 +179,25 @@ export const deleteBrands = async (req, res, next) => {
     const photoList = brands.map((item) => item.photo);
     const idList = brands.map((item) => item._id);
 
-    if (photoList) {
-      for (let i = 0; i < photoList.length; i++) {
+    // Check if photoList contains [null]
+    if (photoList.includes(null)) {
+      for (let i = 0; i < photoList?.length; i++) {
+        if (photoList[i] !== null) {
+          await cloudPhotoDelete(photoList[i]);
+        }
+      }
+    } else {
+      for (let i = 0; i < photoList?.length; i++) {
         await cloudPhotoDelete(photoList[i]);
       }
     }
+
     // Delete brands with matching _id values
     await Brand.deleteMany({ _id: { $in: _id } });
 
-    res.status(200).json({ idList, message: "All Data deleted successful" });
+    return res
+      .status(200)
+      .json({ idList, message: "All Data deleted successfully" });
   } catch (error) {
     console.log(error);
     next(createError("brand update not found", 400));

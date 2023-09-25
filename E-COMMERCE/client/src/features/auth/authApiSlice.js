@@ -142,6 +142,7 @@ export const profilePasswordChange = createAsyncThunk(
     }
   }
 );
+
 // Update User Status Data
 export const profileUpdate = createAsyncThunk(
   "user/profileUpdate",
@@ -149,6 +150,24 @@ export const profileUpdate = createAsyncThunk(
     try {
       const response = await axios.put(
         `http://localhost:5050/api/v1/auth/profile-update/${data.id}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
+  }
+);
+// Update User Status Data
+export const profilePhotoUpdate = createAsyncThunk(
+  "user/profilePhotoUpdate",
+  async ({ data, id }) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5050/api/v1/auth/profile-photo-update/${id}`,
         data,
         {
           withCredentials: true,

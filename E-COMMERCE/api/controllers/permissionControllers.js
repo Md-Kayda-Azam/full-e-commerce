@@ -130,3 +130,28 @@ export const statusUpdatePermission = async (req, res, next) => {
     next(createError("Permission update not found", 400));
   }
 };
+
+/**
+ * Delete permissions
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+export const deletePermissions = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+
+    const permissions = await Permission.find({ _id: { $in: _id } });
+    const idList = permissions.map((item) => item._id);
+
+    // Delete permissions with matching _id values
+    await Permission.deleteMany({ _id: { $in: _id } });
+
+    return res
+      .status(200)
+      .json({ idList, message: "All Data deleted successfully" });
+  } catch (error) {
+    next(createError("brand update not found", 400));
+  }
+};

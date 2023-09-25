@@ -10,7 +10,7 @@ import bcrypt from "bcrypt";
  * @param {*} res
  */
 export const getAllCategorys = async (req, res, next) => {
-  const categorys = await Category.find().populate([
+  const categories = await Category.find().populate([
     {
       path: "parentCategory",
       populate: {
@@ -31,8 +31,8 @@ export const getAllCategorys = async (req, res, next) => {
     },
   ]);
 
-  if (categorys.length > 0) {
-    return res.status(200).json(categorys);
+  if (categories.length > 0) {
+    return res.status(200).json({ categories });
   }
 
   res.status(400).json({ message: "Category data not found" });
@@ -179,12 +179,11 @@ export const updatedCategory = async (req, res, next) => {
       catIcon = icon;
     }
 
-    // category parentCategory updated
-    let parewntCat = updateCategory.parentCategory;
-    if (parentCategory) {
-      catIcon = parentCategory;
-    }
-
+    //  category parentCategory updated
+    // if (parentCategory) {
+    //   parewntCat = parentCategory;
+    //   updateCategory.parentCategory = parewntCat;
+    // }
     // category photo updated
     let logoFile = updateCategory.photo;
 
@@ -196,7 +195,6 @@ export const updatedCategory = async (req, res, next) => {
 
     updateCategory.name = name;
     updateCategory.slug = slugCreate(name);
-    updateCategory.parentCategory = parewntCat;
     updateCategory.icon = catIcon;
     updateCategory.photo = logoFile;
     updateCategory.save();
@@ -231,5 +229,45 @@ export const statusUpdateCategory = async (req, res, next) => {
     res.status(200).json({ category, message: "Status updated successful" });
   } catch (error) {
     next(createError("Category update not found", 400));
+  }
+};
+
+/**
+ * Delete Categories
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+export const deleteCategories = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+
+    const categories = await Category.find({ _id: { $in: _id } });
+    const photoList = categories.map((item) => item.photo);
+    const idList = categories.map((item) => item._id);
+
+    // Check if photoList contains [null]
+    if (photoList.includes(null)) {
+      for (let i = 0; i < photoList?.length; i++) {
+        if (photoList[i] !== null) {
+          await cloudPhotoDelete(photoList[i]);
+        }
+      }
+    } else {
+      for (let i = 0; i < photoList?.length; i++) {
+        await cloudPhotoDelete(photoList[i]);
+      }
+    }
+
+    // Delete brands with matching _id values
+    await Category.deleteMany({ _id: { $in: _id } });
+
+    return res
+      .status(200)
+      .json({ idList, message: "All Data deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    next(createError("brand update not found", 400));
   }
 };

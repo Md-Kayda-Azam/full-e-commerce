@@ -9,12 +9,17 @@ import bcrypt from "bcrypt";
  * @param {*} res
  */
 export const getAllTags = async (req, res, next) => {
-  const Tags = await Tag.find();
-  if (Tags.length > 0) {
-    return res.status(200).json(Tags);
+  try {
+    const tags = await Tag.find();
+    if (tags.length > 0) {
+      res.status(200).json({
+        tags,
+        message: "Get all tags successful",
+      });
+    }
+  } catch (error) {
+    next(createError("Tag data not found", 400));
   }
-
-  res.status(400).json({ message: "Tag data not found" });
 };
 /**
  * create Tag
@@ -134,5 +139,25 @@ export const statusUpdateTag = async (req, res, next) => {
     res.status(200).json({ tag, message: "Status updated successful" });
   } catch (error) {
     next(createError("Tag update not found", 400));
+  }
+};
+/**
+ * product tag slected data delete
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+export const deleteTags = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    const tags = await Tag.find({ _id: { $in: _id } });
+    const idList = tags.map((item) => item._id);
+
+    // Delete brands with matching _id values
+    await Tag.deleteMany({ _id: { $in: _id } });
+
+    res.status(200).json({ idList, message: "All Data deleted successful" });
+  } catch (error) {
+    next(createError("brand update not found", 400));
   }
 };

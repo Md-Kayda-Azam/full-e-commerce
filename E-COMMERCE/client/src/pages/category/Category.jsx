@@ -1,49 +1,50 @@
-import { useEffect, useMemo, useState } from "react";
-import DataTables from "react-data-table-component";
+import { useDispatch, useSelector } from "react-redux";
 
 import PageHeader from "../../components/PageHeader/PageHeader";
-import { getAllPermissionData } from "../../features/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useMemo, useState } from "react";
 import {
-  deleteRole,
-  deleteRoles,
-  updateRoleStatusData,
-} from "../../features/user/userApiSlice";
+  deleteCategories,
+  deleteProductCategory,
+  updateStatusProductCategory,
+} from "../../features/product/productApiSlice";
+
+import DataTables from "react-data-table-component";
+
 import { timeAgo } from "../../helpers/timeAgo";
-import CreateRole from "../../components/Modals/RoleModals/CreateRole";
+import CategoryModal from "../../components/Modals/CategoryModals/CreateCategory";
+import CategoryUpdateModal from "../../components/Modals/CategoryModals/UpdateCategory";
 import {
   deleteAlert,
   messageToaster,
   selectionRowsDelete,
 } from "../../utils/tools";
-import UpdateRole from "../../components/Modals/RoleModals/UpdateRole";
 
-const Role = () => {
+const Category = () => {
   const cols = [
     {
-      name: "Name",
+      name: "Category Logo",
+      selector: (row) => (
+        <img
+          src={row.photo}
+          style={{
+            width: "50px",
+            height: "50px",
+            margin: "10px",
+            objectFit: "cover",
+          }}
+          className="border rounded"
+          alt="logo"
+        />
+      ),
+    },
+    {
+      name: "Category Name",
       selector: (row) => row.name,
       sortable: true,
     },
     {
       name: "Slug",
       selector: (row) => row.slug,
-    },
-    {
-      name: "Permission",
-      selector: (row) => (
-        <>
-          <ul>
-            {row.permissions?.map((per, index) => {
-              return (
-                <li style={{ listStyleType: "none" }} key={index}>
-                  {per}
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      ),
     },
     {
       name: "CreatedAt",
@@ -75,14 +76,14 @@ const Role = () => {
         <>
           <button
             className="btn btn-small btn-warning mr-1"
-            data-target="#roleEditModalPopup"
+            data-target="#categoryEditModalPopup"
             data-toggle="modal"
             onClick={() => setIdEdit(row._id)}
           >
             <i className="fa fa-edit"></i>
           </button>
           <button
-            onClick={() => handleDeleteRole(row._id)}
+            onClick={() => handleCategoryDelete(row._id)}
             className="btn btn-small btn-danger"
           >
             <i className="fa fa-trash"></i>
@@ -93,38 +94,33 @@ const Role = () => {
   ];
 
   const dispatch = useDispatch();
-
-  const { role, error, message } = useSelector(getAllPermissionData);
+  const { category, error, message } = useSelector((state) => state.product);
 
   const [idEdit, setIdEdit] = useState("");
-
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleCleared, setToggleCleared] = useState(false);
 
-  // delete role data
-  const handleDeleteRole = (id) => {
-    deleteAlert(dispatch, deleteRole, id);
-  };
-  /// status update
-  const handleStatusUpdate = (id, status) => {
-    dispatch(updateRoleStatusData({ id, status }));
+  // Category data delete
+  const handleCategoryDelete = (id) => {
+    deleteAlert(dispatch, deleteProductCategory, id);
   };
 
-  // validation
-  useEffect(() => {
-    messageToaster(dispatch, error, message);
-  }, [error, message, dispatch]);
+  // handle Category status updated
+  const handleStatusUpdate = (id, status) => {
+    dispatch(updateStatusProductCategory({ id, status }));
+  };
 
   // handle rows select
   const handleRowSelect = (state) => {
     setSelectedRows(state.selectedRows.map((row) => row));
   };
-  // Delete all rows seleted
+
+  // seleted rows delete
   const contextActions = useMemo(() => {
     const handleDelete = selectionRowsDelete(
       selectedRows,
       dispatch,
-      deleteRoles,
+      deleteCategories,
       setSelectedRows,
       setToggleCleared,
       toggleCleared
@@ -133,11 +129,16 @@ const Role = () => {
     return handleDelete;
   }, [dispatch, selectedRows, setToggleCleared, toggleCleared]);
 
-  // Role Data search and Filtering code
+  // Toaster Message
+  useEffect(() => {
+    messageToaster(dispatch, error, message);
+  }, [error, message, dispatch]);
+
+  // Category Data search and Filtering code
   const [filterText, setFilterText] = useState("");
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
-  const filteredItems = role?.filter(
+  const filteredItems = category?.filter(
     (item) =>
       item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
   );
@@ -148,22 +149,21 @@ const Role = () => {
       setFilterText("");
     }
   };
-
   return (
     <>
-      <PageHeader title="Roles" />
+      <PageHeader title="Category" />
 
-      <CreateRole show="roleModalPopup" />
-      <UpdateRole idEdit={idEdit} show="roleEditModalPopup" />
+      <CategoryModal modal="categoryModalPopup" />
+      <CategoryUpdateModal idEdit={idEdit} modal="categoryEditModalPopup" />
 
       <div className="row">
         <div className="col-md-12">
           <button
             className="btnm btn-primary"
-            data-target="#roleModalPopup"
+            data-target="#categoryModalPopup"
             data-toggle="modal"
           >
-            Add new role
+            Add new category
           </button>
           <br />
           <br />
@@ -178,7 +178,6 @@ const Role = () => {
             contextActions={contextActions}
             selectableRows
             highlightOnHover
-            clearSelectedRows={toggleCleared}
             subHeader
             subHeaderComponent={
               <>
@@ -208,4 +207,4 @@ const Role = () => {
   );
 };
 
-export default Role;
+export default Category;

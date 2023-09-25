@@ -114,11 +114,14 @@ export const deleteUser = async (req, res, next) => {
 export const updatedUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, password, role } = req.body;
+    const { name, email, password, passwordu, role } = req.body;
 
-    // password hash
-    const hashPassword = await bcrypt.hash(password, 10);
-
+    let hashPassword = password;
+    if (passwordu !== undefined) {
+      // password hash
+      const hashP = await bcrypt.hash(passwordu, 10);
+      hashPassword = hashP;
+    }
     // update user data
     const user = await User.findByIdAndUpdate(
       id,
@@ -164,5 +167,44 @@ export const statusUpdateUser = async (req, res, next) => {
     });
   } catch (error) {
     next(createError("User status updated not found", 400));
+  }
+};
+
+/**
+ * Delete Users
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+export const deleteUsers = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    const users = await User.find({ _id: { $in: _id } });
+    const photoList = users.map((item) => item.photo);
+    const idList = users.map((item) => item._id);
+
+    // Check if photoList contains [null]
+    if (photoList.includes(null)) {
+      for (let i = 0; i < photoList?.length; i++) {
+        if (photoList[i] !== null) {
+          await cloudPhotoDelete(photoList[i]);
+        }
+      }
+    } else {
+      for (let i = 0; i < photoList?.length; i++) {
+        await cloudPhotoDelete(photoList[i]);
+      }
+    }
+
+    // Delete brands with matching _id values
+    await User.deleteMany({ _id: { $in: _id } });
+
+    return res
+      .status(200)
+      .json({ idList, message: "All Data deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    next(createError("brand update not found", 400));
   }
 };

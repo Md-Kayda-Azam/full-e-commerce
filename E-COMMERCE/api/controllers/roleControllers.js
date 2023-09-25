@@ -140,3 +140,21 @@ export const statusUpdateRole = async (req, res, next) => {
     next(createError("Role update not found", 400));
   }
 };
+
+export const deleteRoles = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+
+    const roles = await Role.find({ _id: { $in: _id } });
+    const idList = roles.map((item) => item._id);
+
+    // Delete  with matching _id values
+    await Role.deleteMany({ _id: { $in: _id } });
+
+    return res
+      .status(200)
+      .json({ idList, message: "All Data deleted successfully" });
+  } catch (error) {
+    next(createError("Role Selected Rows deleted not found", 400));
+  }
+};

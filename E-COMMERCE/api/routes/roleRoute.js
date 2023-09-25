@@ -7,6 +7,7 @@ import {
   singleRole,
   updatedRole,
   statusUpdateRole,
+  deleteRoles,
 } from "../controllers/roleControllers.js";
 
 const router = express.Router();
@@ -16,7 +17,7 @@ router.use(tokenVerify);
 
 // create route
 router.get("/", getAllRoles);
-router.post("/", createRole);
+router.post("/", createRole).post("/deleteRoles", deleteRoles);
 router.get("/:id", singleRole);
 router.delete("/:id", deleteRole);
 router.put("/:id", updatedRole);
