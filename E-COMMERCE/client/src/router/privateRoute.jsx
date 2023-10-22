@@ -6,6 +6,7 @@ import AdminDashboard from "../pages/dashboard/AdminDashboard";
 import Order from "../pages/order/Order";
 import Permission from "../pages/permission/Permission";
 import Product from "../pages/product/Product";
+import ProductCreate from "../pages/product/ProductCreate";
 import Profile from "../pages/profile/Profile";
 import Role from "../pages/role/Role";
 import Tag from "../pages/tag/Tag";
@@ -59,6 +60,10 @@ const privateRoute = [
           {
             path: "/order",
             element: <Order />,
+          },
+          {
+            path: "/product-create",
+            element: <ProductCreate />,
           },
         ],
       },

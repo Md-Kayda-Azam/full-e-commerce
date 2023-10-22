@@ -163,6 +163,7 @@ export const updatedCategory = async (req, res, next) => {
     const { id } = req.params;
     const { name, parentCategory, icon } = req.body;
 
+    
     if (!name) {
       next(createError("All field are required!"));
     }
@@ -179,11 +180,11 @@ export const updatedCategory = async (req, res, next) => {
       catIcon = icon;
     }
 
-    //  category parentCategory updated
-    // if (parentCategory) {
-    //   parewntCat = parentCategory;
-    //   updateCategory.parentCategory = parewntCat;
-    // }
+     // category parentCategory updated
+    let  parewntCat = updateCategory.parentCategory
+    if (parentCategory) {
+      parewntCat = parentCategory;
+    }
     // category photo updated
     let logoFile = updateCategory.photo;
 
@@ -197,6 +198,7 @@ export const updatedCategory = async (req, res, next) => {
     updateCategory.slug = slugCreate(name);
     updateCategory.icon = catIcon;
     updateCategory.photo = logoFile;
+    updateCategory.parentCategory = parewntCat
     updateCategory.save();
 
     res.status(200).json({

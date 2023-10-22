@@ -15,9 +15,11 @@ const UpdateCategory = ({ idEdit, modal }) => {
     name: "",
     icon: "",
     parent: "",
+    parentCategory : "",
     logo: null,
     photo: null,
   });
+
 
   // handle OnChange Photo
   const handleOnChangePhoto = (e) => {
@@ -72,11 +74,12 @@ const UpdateCategory = ({ idEdit, modal }) => {
           <div className="">
             <label htmlFor="">Parent Name</label>
             <select
-              name="parent"
-              value={input?.parent}
+              name="parentCategory"
+              value={input?.parentCategory}
               className="form-control"
+              onChange={handleInputChange}
             >
-              <option value="">-select-</option>
+              <option value="">{input?.parentCategory?.name ? input?.parentCategory?.name : "--select--" }</option>
               {category?.map((pcat, index) => {
                 return (
                   <option value={pcat._id} key={index}>

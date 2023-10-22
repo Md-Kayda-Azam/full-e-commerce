@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   deleteCategories,
   deleteProductCategory,
+  getAllCategories,
   updateStatusProductCategory,
 } from "../../features/product/productApiSlice";
 
@@ -45,6 +46,16 @@ const Category = () => {
     {
       name: "Slug",
       selector: (row) => row.slug,
+    },
+    {
+      name: "Sub Category",
+      selector: (row) => (
+        <ul>
+          {row.subCategory.map((item, index) => {
+            return <li key={index}>{item.name}</li>;
+          })}
+        </ul>
+      ),
     },
     {
       name: "CreatedAt",
@@ -132,6 +143,7 @@ const Category = () => {
   // Toaster Message
   useEffect(() => {
     messageToaster(dispatch, error, message);
+    dispatch(getAllCategories());
   }, [error, message, dispatch]);
 
   // Category Data search and Filtering code
@@ -149,6 +161,7 @@ const Category = () => {
       setFilterText("");
     }
   };
+
   return (
     <>
       <PageHeader title="Category" />

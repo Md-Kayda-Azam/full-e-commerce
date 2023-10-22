@@ -110,7 +110,7 @@ const productSchama = mongoose.Schema(
         // required: true,
       },
     },
-    shotDesc: {
+    sortDesc: {
       type: String,
       required: true,
     },
