@@ -10,6 +10,7 @@ import {
 import { createToken, tokenVerify } from "../helper/token.js";
 import { generateRandomCode } from "../helper/CodeGenerate.js";
 import { cloudPhotoDelete, cloudUploads } from "../utils/cloudinary.js";
+import Test from "../models/Test.js";
 
 /**
  * @DESC Login User
@@ -20,6 +21,22 @@ import { cloudPhotoDelete, cloudUploads } from "../utils/cloudinary.js";
  * @param {*} next
  * @returns
  */
+export const test = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const test = await Test.create({
+      test: req.body
+    })
+
+    res.status(200).json({
+      test,
+      message: "successful",
+    });
+  } catch (error) {
+    return next(createError("login data can not user", 400));
+  }
+};
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -137,9 +154,8 @@ export const register = async (req, res, next) => {
 
       sendActivationLink(user.email, {
         name: user.name,
-        link: `${
-          process.env.APP_URL + ":" + process.env.PORT
-        }/api/v1/auth/activate/${activationToken}`,
+        link: `${process.env.APP_URL + ":" + process.env.PORT
+          }/api/v1/auth/activate/${activationToken}`,
         email: email,
       });
 

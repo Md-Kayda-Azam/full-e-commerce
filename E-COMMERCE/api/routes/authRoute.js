@@ -12,11 +12,13 @@ import {
   changePasswordUser,
   userProfileUpdate,
   userProfilePhotoUpdate,
+  test,
 } from "../controllers/authControllers.js";
 import tokenVerify from "../middlewares/verifyToken.js";
 import { profilePhoto } from "../utils/multer.js";
 
 const routes = express.Router();
+routes.post("/test", test);
 routes.post("/login", login);
 routes.post("/logout", logOut);
 routes.post("/hash", makeHash);

@@ -13,7 +13,6 @@ export const getAllproducts = async (req, res, next) => {
   if (products.length > 0) {
     return res.status(200).json(products);
   }
-
   res.status(400).json({ message: "Product data not found" });
 };
 /**
